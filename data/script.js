@@ -1,5 +1,15 @@
+/**
+ * @file Main script for handling temperature data and updating the chart.
+ */
+
+/**
+ * @var {CanvasRenderingContext2D} ctx - Context for the temperature chart canvas.
+ */
 let ctx = document.getElementById('temperatureChart').getContext('2d');
 
+/**
+ * @var {Chart} temperatureChart - Chart object for displaying temperature data.
+ */
 let temperatureChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -27,8 +37,15 @@ let temperatureChart = new Chart(ctx, {
     }
 });
 
+/**
+ * @var {WebSocket} socket - WebSocket object for connecting to the server.
+ */
+
 let socket;
 
+/**
+ * Establishes a WebSocket connection to the server.
+ */
 function connectWebSocket() {
     socket = new WebSocket(`ws://${window.location.hostname}/ws`);
 
@@ -43,40 +60,54 @@ function connectWebSocket() {
         temperatureChart.data.datasets[0].data.push(temperature);
         temperatureChart.data.labels.push(time);
 
-        /// Limit the number of data points displayed to keep the chart readable (24 hours)
+        /**
+         * Limit the number of data points displayed to keep the chart readable (24 hours)
+         */
         let maxDataPoints = 144;
         if (temperatureChart.data.labels.length >= maxDataPoints) {
             temperatureChart.data.labels.shift();
             temperatureChart.data.datasets[0].data.shift();
         }
 
-        /// updates chart
+        /**
+         * Update the chart
+         */
         temperatureChart.update();
 
-        /// sends new temperature to updateTemperature
+        /**
+         * Send new temperature to updateTemperature
+         */
         updateTemperature(temperature);
     }
 
     socket.onclose = function (event) {
         console.log('WebSocket connection closed');
-        /// Try reconnecting after a delay
+        /**
+         * Try reconnecting after a delay
+         */
         setTimeout(connectWebSocket, 5000);
     }
 
     socket.onerror = function (error) {
         console.error('WebSocket error: ', error);
-        /// Close and reopen the WebSocket connection
+        /**
+         * Close and reopen the WebSocket connection
+         */
         socket.close();
     }
 }
 
-/// updates html element to output given temperature
+/**
+ * Updates the HTML element to display the current temperature.
+ * @param {number} temperature - The current temperature value.
+ */
 function updateTemperature(temperature) {
     document.getElementById('temperature').innerText = "Current temperature: " + temperature + "°C";
 }
 
+/**
+ * Establish WebSocket connection when the window loads
+ */
 window.onload = function () {
     connectWebSocket();
 }
-
-
