@@ -60,7 +60,7 @@ function connectWebSocket() {
     socket.onclose = function (event) {
         console.log('WebSocket connection closed');
         /// Try reconnecting after a delay
-        setTimeout(connectWebSocket, 60000);
+        setTimeout(connectWebSocket, 5000);
     }
 
     socket.onerror = function (error) {

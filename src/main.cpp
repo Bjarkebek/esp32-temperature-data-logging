@@ -172,6 +172,8 @@ void appendFile(fs::FS &fs, const char *path, const char *message)
 
 
 
+/// -------------------------------------------- Websocket
+
 /// updates the webserver
 void notifyClients() {
   ws.textAll(String(temperature));
@@ -208,6 +210,10 @@ void initWebSocket() {
   ws.onEvent(onEvent);
   server.addHandler(&ws);
 }
+
+
+
+
 
 
 void setup()
@@ -264,6 +270,10 @@ void setup()
 
 
 
+
+
+
+
   /// Initialize a NTPClient to get time
   timeClient.begin();
   timeClient.setTimeOffset(7200); /// GMT +1 (+summertime) = 7200
@@ -303,8 +313,6 @@ void setup()
   }
   file.close();
 
-  
-  
 
   /// Start the DallasTemperature library
   sensors.begin();
@@ -319,5 +327,7 @@ void setup()
 void loop()
 {
   getReadings();
-  delay(10000); /// Update every 10 seconds
+  delay(5000); /// Update every 10 seconds
+  // delay(1000 * 60); /// Update every minute
+  // delay(1000 * 60 * 60); /// Update every hour
 }
